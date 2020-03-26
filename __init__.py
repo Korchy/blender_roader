@@ -8,7 +8,8 @@ from . import roader_ops
 from . import roader_panel
 from . import roader_preferences
 from .addon import Addon
-
+from .console_out import printc_class
+import sys
 
 bl_info = {
     'name': 'Roader',
@@ -28,6 +29,10 @@ def register():
         roader_ops.register()
         roader_panel.register()
         roader_preferences.register()
+
+        # from io import StringIO
+        # sys.stdout = printc_class = StringIO()
+
     else:
         print('It seems you are trying to use the dev version of the ' + bl_info['name'] + ' add-on. It may work not properly. Please download and use the release version!')
 
@@ -37,6 +42,9 @@ def unregister():
         roader_preferences.unregister()
         roader_panel.unregister()
         roader_ops.unregister()
+
+        # sys.stdout = sys.__stdout__
+
 
 
 if __name__ == '__main__':

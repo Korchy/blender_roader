@@ -26,6 +26,7 @@ class ROADER_OT_make_road(Operator):
         if self.mode == 0:
             printc('start monitor')
             print('start monitor print')
+            # print(1/0)
             CurveMonitor.start()
             self.mode = 1
         else:
