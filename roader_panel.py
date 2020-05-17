@@ -16,7 +16,15 @@ class ROADER_PT_panel(Panel):
     bl_category = 'Roader'
 
     def draw(self, context):
-        operator = self.layout.operator('roader.make_road', icon='BLENDER', text='roader execute')
+        layout = self.layout
+        if context.preferences.addons[__package__].preferences.interactive_update:
+            layout.prop(context.preferences.addons[__package__].preferences, 'interactive_update', icon='CANCEL', toggle=True)
+        else:
+            layout.prop(context.preferences.addons[__package__].preferences, 'interactive_update', icon='PLAY', toggle=True)
+        layout.operator('roader.add_curve_to_road_map_base', icon='PLUS')
+        layout.operator('roader.remove_curve_from_road_map_base', icon='PANEL_CLOSE')
+        layout.separator()
+        layout.operator('roader.rebuild_roads', icon='FILE_REFRESH')
 
 
 def register():

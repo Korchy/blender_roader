@@ -5,8 +5,9 @@
 #   https://github.com/Korchy/blender_roader
 
 from bpy.types import AddonPreferences
-from bpy.props import FloatProperty
+from bpy.props import FloatProperty, BoolProperty
 from bpy.utils import register_class, unregister_class
+from .roader_curve_monitor import ChangeMonitor
 
 
 class ROADER_preferences(AddonPreferences):
@@ -17,8 +18,27 @@ class ROADER_preferences(AddonPreferences):
         default=0.001
     )
 
+    interactive_update: BoolProperty(
+        name='Interactive update',
+        default=False,
+        update=lambda self, context: self._on_interactive_update_change(
+            self=self,
+            context=context
+        )
+    )
+
     def draw(self, context):
         self.layout.prop(self, 'edit_threshold')
+
+    @staticmethod
+    def _on_interactive_update_change(self, context):
+        # on interactive update change
+        if self.interactive_update:
+            print('start interactive update')
+            ChangeMonitor.start()
+        else:
+            print('stop interactive update')
+            ChangeMonitor.stop()
 
 
 def register():
