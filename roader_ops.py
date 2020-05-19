@@ -17,7 +17,10 @@ class ROADER_OT_add_curve(Operator):
 
     def execute(self, context):
         # add selected curves to road map basis
-        Roader.add(objects=context.selected_objects)
+        Roader.add_curve_to_map(
+            scene=context.scene,
+            objects=context.selected_objects
+        )
         return {'FINISHED'}
 
     @classmethod
@@ -33,7 +36,10 @@ class ROADER_OT_remove_curve(Operator):
 
     def execute(self, context):
         # remove selected curves from road map basis
-        Roader.remove(objects=context.selected_objects)
+        Roader.remove_curve_from_map(
+            scene=context.scene,
+            objects=context.selected_objects
+        )
         return {'FINISHED'}
 
     @classmethod
@@ -49,7 +55,23 @@ class ROADER_OT_rebuild_roads(Operator):
 
     def execute(self, context):
         # remove selected curves from road map basis
-        Roader.rebuild_road_map()
+        Roader.rebuild_road_map(
+            scene=context.scene
+        )
+        return {'FINISHED'}
+
+
+class ROADER_OT_clear_roads(Operator):
+    bl_idname = 'roader.clear_roads'
+    bl_label = 'Clear roads'
+    bl_description = 'Roader: clear roads'
+    bl_options = {'REGISTER', 'UNDO'}
+
+    def execute(self, context):
+        # remove roads
+        Roader.clear_road_map(
+            scene=context.scene
+        )
         return {'FINISHED'}
 
 
@@ -57,9 +79,11 @@ def register():
     register_class(ROADER_OT_add_curve)
     register_class(ROADER_OT_remove_curve)
     register_class(ROADER_OT_rebuild_roads)
+    register_class(ROADER_OT_clear_roads)
 
 
 def unregister():
+    unregister_class(ROADER_OT_clear_roads)
     unregister_class(ROADER_OT_rebuild_roads)
     unregister_class(ROADER_OT_remove_curve)
     unregister_class(ROADER_OT_add_curve)

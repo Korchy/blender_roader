@@ -7,6 +7,7 @@
 from . import roader_ops
 from . import roader_panel
 from . import roader_preferences
+from . import roader_params
 from .addon import Addon
 
 bl_info = {
@@ -24,6 +25,7 @@ bl_info = {
 
 def register():
     if not Addon.dev_mode():
+        roader_params.register()
         roader_ops.register()
         roader_panel.register()
         roader_preferences.register()
@@ -36,6 +38,7 @@ def unregister():
         roader_preferences.unregister()
         roader_panel.unregister()
         roader_ops.unregister()
+        roader_params.unregister()
 
 
 if __name__ == '__main__':

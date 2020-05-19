@@ -57,4 +57,4 @@ class ChangeMonitor:
                 # print(obj.id.original.location)
                 if 'on_change_callbacks' in obj.id:
                     for callback_id in obj.id['on_change_callbacks']:
-                        cls.callbacks[callback_id](obj.id)
+                        cls.callbacks[callback_id](scene, obj.id)
