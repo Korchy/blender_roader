@@ -26,9 +26,10 @@ class ROADER_PT_panel(Panel):
         layout.separator()
         layout.operator('roader.rebuild_roads', icon='FILE_REFRESH')
         layout.operator('roader.clear_roads', icon='PANEL_CLOSE')
-        layout.separator()
-        layout.label(text='Current segment')
-        layout.prop(context.active_object.data, 'width')
+        if context.active_object and context.active_object.type == 'CURVE':
+            layout.separator()
+            layout.label(text='Current segment')
+            layout.prop(context.active_object.data, 'width')
 
 
 def register():

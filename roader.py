@@ -5,6 +5,7 @@
 #   https://github.com/Korchy/blender_roader
 
 import bpy
+import bmesh
 from .roader_curve_monitor import ChangeMonitor
 from .roader_curve_tools import BezierTools
 
@@ -21,8 +22,16 @@ class Roader:
     def build_road(cls, road_map_object, curve):
         # make road from curve
         # print(curve)
+        bm = bmesh.new()
+        bm.from_mesh(road_map_object.data)
+
         for point in curve.data.splines.active.bezier_points:
-            print(point.co)
+            # print(point.co)
+            v = bm.verts.new(point.co)
+        bm.verts.index_update()
+        bm.to_mesh(road_map_object.data)
+        # bmesh.update_edit_mesh(road_map_object.data)
+        bm.free()
 
     @classmethod
     def build_road_map(cls, scene):
@@ -77,6 +86,18 @@ class Roader:
             del curve[cls._curve_tag]
             ChangeMonitor.remove(obj=curve, callback=cls.rebuild_road_map)
         cls.rebuild_road_map(scene=scene)
+
+    @classmethod
+    def init_road_map_interactive_change(cls):
+        # add all road map curves to interactive change
+        for curve in cls._road_map_base():
+            ChangeMonitor.add(obj=curve, callback=cls.rebuild_road_map)
+
+    @classmethod
+    def stop_road_map_interactive_change(cls):
+        # remove all road map curves from interactive change
+        for curve in cls._road_map_base():
+            ChangeMonitor.remove(obj=curve, callback=cls.rebuild_road_map)
 
     @classmethod
     def _road_map_base(cls):

@@ -7,6 +7,7 @@
 from bpy.types import AddonPreferences
 from bpy.props import FloatProperty, BoolProperty
 from bpy.utils import register_class, unregister_class
+from .roader import Roader
 from .roader_curve_monitor import ChangeMonitor
 
 
@@ -35,10 +36,12 @@ class ROADER_preferences(AddonPreferences):
         # on interactive update change
         if self.interactive_update:
             print('start interactive update')
+            Roader.init_road_map_interactive_change()
             ChangeMonitor.start()
         else:
             print('stop interactive update')
             ChangeMonitor.stop()
+            Roader.stop_road_map_interactive_change()
 
 
 def register():
