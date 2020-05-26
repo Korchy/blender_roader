@@ -6,11 +6,16 @@
 
 from bpy.props import FloatProperty
 from bpy.types import Curve
+from .roader import Roader
 
 
 def register():
     Curve.width = FloatProperty(
-        default=0.0
+        default=1.0,
+        min=0.1,
+        update=lambda self, context: Roader.rebuild_road_map(
+            scene=context.scene
+        )
     )
 
 

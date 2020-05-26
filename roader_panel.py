@@ -24,8 +24,10 @@ class ROADER_PT_panel(Panel):
         layout.operator('roader.add_curve_to_road_map_base', icon='PLUS')
         layout.operator('roader.remove_curve_from_road_map_base', icon='PANEL_CLOSE')
         layout.separator()
-        layout.operator('roader.rebuild_roads', icon='FILE_REFRESH')
-        layout.operator('roader.clear_roads', icon='PANEL_CLOSE')
+        split = layout.split(factor=0.85)
+        col1, col2 = split.column(), split.column()
+        col1.operator('roader.rebuild_roads', icon='FILE_REFRESH')
+        col2.operator('roader.clear_roads', icon='PANEL_CLOSE', text='')
         if context.active_object and context.active_object.type == 'CURVE':
             layout.separator()
             layout.label(text='Current segment')

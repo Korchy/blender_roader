@@ -6,8 +6,10 @@
 
 import bpy
 import bmesh
+from mathutils import Vector
 from .roader_curve_monitor import ChangeMonitor
 from .roader_curve_tools import BezierTools
+from .roader_bmesh_ex import BmeshEx as BmEx
 
 
 class Roader:
@@ -21,13 +23,17 @@ class Roader:
     @classmethod
     def build_road(cls, road_map_object, curve):
         # make road from curve
-        # print(curve)
         bm = bmesh.new()
         bm.from_mesh(road_map_object.data)
-
-        for point in curve.data.splines.active.bezier_points:
-            # print(point.co)
-            v = bm.verts.new(point.co)
+        for spline in curve.data.splines:
+            for first_point, next_point in zip(spline.bezier_points, spline.bezier_points[1:]):
+                print(first_point.co, next_point.co)
+                cls._build_segment(
+                    bm=bm,
+                    curve=curve,
+                    bezier_point0=first_point,
+                    bezier_point1=next_point
+                )
         bm.verts.index_update()
         bm.to_mesh(road_map_object.data)
         # bmesh.update_edit_mesh(road_map_object.data)
@@ -55,9 +61,12 @@ class Roader:
     @classmethod
     def clear_road_map(cls, scene):
         # remove the road map in the scene
-        road_map_mesh = cls._road_map_object()
+        road_map_object = cls._road_map_object()
+        if road_map_object:
+            bpy.data.objects.remove(road_map_object, do_unlink=True)
+        road_map_mesh = cls._road_map_mesh()
         if road_map_mesh:
-            bpy.data.objects.remove(road_map_mesh, do_unlink=True)
+            bpy.data.meshes.remove(road_map_mesh)
 
     @classmethod
     def rebuild_road_map(cls, scene, curve_changed=None):
@@ -98,6 +107,24 @@ class Roader:
         # remove all road map curves from interactive change
         for curve in cls._road_map_base():
             ChangeMonitor.remove(obj=curve, callback=cls.rebuild_road_map)
+
+    @classmethod
+    def _build_segment(cls, bm, curve, bezier_point0, bezier_point1, verts0=None, verts1=None):
+        # built grid segment from bezier point0 to point1
+        z_normal = Vector((0.0, 0.0, 1.0))
+        point0_co = (bezier_point0.handle_right - bezier_point0.co).cross(z_normal)
+        point0_co.normalize()
+        point0_co *= curve.data.width
+        point0_co += bezier_point0.co
+        point0_co = curve.matrix_world @ point0_co
+        point1_co = (bezier_point0.handle_left - bezier_point0.co).cross(z_normal)
+        point1_co.normalize()
+        point1_co *= curve.data.width
+        point1_co += bezier_point0.co
+        point1_co = curve.matrix_world @ point1_co
+        # print('p0,p1', point0_co, point1_co)
+        row = BmEx.row_v(bmesh=bm, point0_co=point0_co, point1_co=point1_co, number=curve.data.resolution_u+1)
+        # print(row)
 
     @classmethod
     def _road_map_base(cls):
