@@ -16,7 +16,7 @@ class ROADER_preferences(AddonPreferences):
 
     edit_threshold: FloatProperty(
         name='Edit threshold',
-        default=0.001
+        default=0.1
     )
 
     interactive_update: BoolProperty(
